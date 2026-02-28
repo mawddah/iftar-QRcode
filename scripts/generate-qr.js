@@ -1,0 +1,1 @@
+const QRCode = require('qrcode'); const generateQR = async () => { try { const url = 'http://localhost:3000'; await QRCode.toFile('QR-Code-Print-Ready.png', url, { color: { dark: '#000000', light: '#FFFFFF' }, width: 1000 }); console.log('Generated QR-Code-Print-Ready.png'); } catch(e) { console.error(e); } }; generateQR();
