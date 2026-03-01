@@ -64,9 +64,9 @@ export default function Home() {
 
     return (
         <main className="min-h-screen pb-20">
-            <header className="p-8 text-center border-b border-white/10 bg-[#3b1245]">
+            <header className="p-8 text-center border-b border-white/10 bg-[#3b1245]/80 backdrop-blur-md sticky top-0 z-10">
                 <h1 className="text-4xl font-playfair text-transparent bg-clip-text bg-gradient-to-r from-[#facc15] to-[#fef08a] mb-3 tracking-wide drop-shadow-[0_0_15px_rgba(250,204,21,0.3)]">Ramadan Kareem</h1>
-                <p className="text-white/70 font-inter text-sm max-w-[280px] mx-auto leading-relaxed">Daily Checklist & Activity Memories</p>
+                <p className="text-white/80 font-inter text-sm max-w-[280px] mx-auto leading-relaxed">Daily Checklist & Activity Memories</p>
             </header>
 
             <section className="p-6 flex flex-col items-center gap-4 max-w-sm mx-auto mt-4">
@@ -85,7 +85,7 @@ export default function Home() {
                 <button
                     onClick={() => galleryInputRef.current?.click()}
                     disabled={uploading}
-                    className="w-full bg-[#4a1c57] text-[#facc15] border border-[#facc15]/30 font-medium py-4 rounded-xl flex items-center justify-center gap-3 transition-transform hover:bg-[#5c236d] active:scale-95 disabled:opacity-50"
+                    className="w-full bg-[#4a1c57]/60 backdrop-blur-sm text-[#facc15] border border-[#facc15]/30 font-medium py-4 rounded-xl flex items-center justify-center gap-3 transition-transform hover:bg-[#5c236d]/80 active:scale-95 disabled:opacity-50"
                 >
                     <ImageIcon size={22} />
                     Upload from Gallery
@@ -100,7 +100,7 @@ export default function Home() {
             ) : (
                 <section className="px-4 mt-6 columns-2 sm:columns-3 md:columns-4 gap-4 space-y-4">
                     {photos.map(photo => (
-                        <div key={photo.id} className="break-inside-avoid relative group cursor-pointer overflow-hidden rounded-xl shadow-[0_4px_15px_rgba(0,0,0,0.3)] border border-white/10" onClick={() => setSelectedPhoto(photo)}>
+                        <div key={photo.id} className="break-inside-avoid relative group cursor-pointer overflow-hidden rounded-xl shadow-[0_4px_15px_rgba(0,0,0,0.5)] border border-white/20 bg-[#2a0a2f]/40 backdrop-blur-sm" onClick={() => setSelectedPhoto(photo)}>
                             <img src={photo.filename} alt="Memory" className="w-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
                         </div>
                     ))}
