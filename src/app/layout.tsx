@@ -13,7 +13,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-    title: "Ramadan Iftar - Shared Gallery",
+    title: "Ramadan Kareem - Shared Gallery",
     description: "Scan to Capture, Share & Download Tonight’s Memories",
 };
 
@@ -25,7 +25,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body
-                className={`${playfair.variable} ${inter.variable} font-sans antialiased bg-slate-50 text-slate-900 selection:bg-blue-200 selection:text-blue-900`}
+                className={`${playfair.variable} ${inter.variable} font-sans antialiased bg-[#2a0a2f] text-slate-100 selection:bg-[#facc15] selection:text-[#2a0a2f]`}
             >
                 {children}
             </body>
