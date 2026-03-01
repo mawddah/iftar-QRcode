@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPhotos, deletePhoto, UPLOADS_DIR } from '@/lib/db';
-import fs from 'fs/promises';
-import path from 'path';
+import { getPhotos, deletePhoto, initDb } from '@/lib/db';
+import { del } from '@vercel/blob';
 
 export async function GET() {
     try {
+        await initDb();
         const photos = await getPhotos();
         return NextResponse.json({ photos });
     } catch (error) {
@@ -30,18 +30,19 @@ export async function DELETE(request: NextRequest) {
             return NextResponse.json({ error: 'Photo not found' }, { status: 404 });
         }
 
-        if (photo.ownerId !== ownerId) {
+        // Must match the original lowercase definition in Postgres
+        if (photo.ownerid !== ownerId) {
             return NextResponse.json({ error: 'Unauthorized deletion' }, { status: 403 });
         }
 
+        // Delete from Postgres database
         await deletePhoto(id);
 
-        // Remove file from the persistent directory
-        const filePath = path.join(UPLOADS_DIR, photo.filename);
+        // Delete the file from Vercel Blob (filename contains the full URL in this context)
         try {
-            await fs.unlink(filePath);
+            await del(photo.filename);
         } catch (e) {
-            console.warn("Could not delete file from disk:", e);
+            console.warn("Could not delete from Vercel Blob:", e);
         }
 
         return NextResponse.json({ success: true, deleted: id });

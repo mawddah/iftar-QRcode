@@ -1,52 +1,61 @@
-import fs from 'fs/promises';
-import path from 'path';
-
-// Use environment variable DATA_DIR if set, otherwise fallback to local /data directory
-export const DATA_DIR = process.env.DATA_DIR || path.join(process.cwd(), 'data');
-export const UPLOADS_DIR = path.join(DATA_DIR, 'uploads');
-export const DB_PATH = path.join(DATA_DIR, 'photos.json');
+import { sql } from '@vercel/postgres';
 
 export interface Photo {
     id: string;
     filename: string;
-    originalName: string;
-    createdAt: string;
-    ownerId: string;
+    originalname: string;
+    createdat: string;
+    ownerid: string;
 }
 
-// Ensure the storage paths exist
 export async function initDb() {
     try {
-        await fs.mkdir(DATA_DIR, { recursive: true });
-        await fs.mkdir(UPLOADS_DIR, { recursive: true });
-    } catch (e) { /* ignore */ }
+        await sql`
+      CREATE TABLE IF NOT EXISTS photos (
+        id VARCHAR(255) PRIMARY KEY,
+        filename VARCHAR(255) NOT NULL,
+        originalname VARCHAR(255) NOT NULL,
+        createdat TIMESTAMP NOT NULL,
+        ownerid VARCHAR(255) NOT NULL
+      );
+    `;
+    } catch (error) {
+        console.error("Error initializing database:", error);
+    }
 }
 
 export async function getPhotos(): Promise<Photo[]> {
-    await initDb();
     try {
-        const data = await fs.readFile(DB_PATH, 'utf-8');
-        return JSON.parse(data);
+        const { rows } = await sql<Photo>`SELECT * FROM photos ORDER BY createdat DESC`;
+        return rows;
     } catch (error) {
-        if ((error as any).code === 'ENOENT') {
-            await fs.writeFile(DB_PATH, '[]');
-            return [];
-        }
-        throw error;
+        console.error("Error fetching photos:", error);
+        return [];
     }
 }
 
 export async function addPhoto(photo: Photo): Promise<void> {
-    const photos = await getPhotos();
-    photos.unshift(photo);
-    await fs.writeFile(DB_PATH, JSON.stringify(photos, null, 2));
+    try {
+        await sql`
+      INSERT INTO photos (id, filename, originalname, createdat, ownerid)
+      VALUES (${photo.id}, ${photo.filename}, ${photo.originalname}, ${photo.createdat}, ${photo.ownerid})
+    `;
+    } catch (error) {
+        console.error("Error adding photo to database:", error);
+        throw error;
+    }
 }
 
 export async function deletePhoto(id: string): Promise<Photo | null> {
-    const photos = await getPhotos();
-    const index = photos.findIndex(p => p.id === id);
-    if (index === -1) return null;
-    const [deleted] = photos.splice(index, 1);
-    await fs.writeFile(DB_PATH, JSON.stringify(photos, null, 2));
-    return deleted;
+    try {
+        const { rows } = await sql<Photo>`
+      DELETE FROM photos
+      WHERE id = ${id}
+      RETURNING *
+    `;
+        return rows[0] || null;
+    } catch (error) {
+        console.error("Error deleting photo:", error);
+        return null;
+    }
 }

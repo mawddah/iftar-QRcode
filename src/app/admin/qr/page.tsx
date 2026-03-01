@@ -39,25 +39,25 @@ export default function AdminQR() {
                 ref={printRef}
                 className="bg-white w-[210mm] min-h-[297mm] shadow-2xl print:shadow-none flex flex-col items-center justify-center p-12 text-center border box-border print:border-none print:w-full print:min-h-full"
             >
-                <div className="border-4 border-black p-16 rounded-3xl flex flex-col items-center max-w-2xl">
-                    <h1 className="text-5xl font-playfair font-bold text-black mb-16 tracking-wider uppercase">
-                        Corporate Dinner
+                <div className="border-4 border-blue-900 p-16 rounded-3xl flex flex-col items-center max-w-2xl bg-slate-50">
+                    <h1 className="text-5xl font-playfair font-bold text-blue-900 mb-16 tracking-wider uppercase">
+                        Ramadan Iftar
                     </h1>
 
-                    <div className="bg-white p-6 rounded-2xl shadow-[0_0_20px_rgba(212,175,55,0.4)] mb-12">
+                    <div className="bg-white p-6 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.2)] mb-12">
                         <QRCode
                             value={url || "https://example.com"}
                             size={300}
-                            fgColor="#000000"
+                            fgColor="#1e3a8a"
                             bgColor="#FFFFFF"
                             level="H"
                         />
                     </div>
 
-                    <h2 className="text-3xl font-playfair font-medium text-black max-w-lg leading-relaxed mb-4">
+                    <h2 className="text-3xl font-playfair font-medium text-slate-800 max-w-lg leading-relaxed mb-4">
                         Scan to Capture, Share & Download
                     </h2>
-                    <h3 className="text-3xl font-playfair font-bold text-[#D4AF37] italic">
+                    <h3 className="text-3xl font-playfair font-bold text-blue-600 italic">
                         Tonight's Memories
                     </h3>
                 </div>

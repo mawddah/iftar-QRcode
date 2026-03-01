@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
-import { addPhoto, UPLOADS_DIR, initDb } from '@/lib/db';
+import { addPhoto, initDb } from '@/lib/db';
+import { put } from '@vercel/blob';
 import crypto from 'crypto';
+import path from 'path';
 
 export async function POST(request: NextRequest) {
     try {
         await initDb();
+
         const formData = await request.formData();
         const file = formData.get('photo') as File | null;
         const ownerId = formData.get('ownerId') as string | null;
@@ -15,28 +16,25 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Missing file or ownerId' }, { status: 400 });
         }
 
-        const buffer = Buffer.from(await file.arrayBuffer());
-
-        // Generate a unique ID for the photo
+        // Generate unique ID
         const id = crypto.randomUUID();
-        // Keep original extension, but normalize the filename
         const ext = path.extname(file.name) || '.jpg';
         const filename = `${id}${ext}`;
 
-        // Write image to the safe uploads directory
-        const filePath = path.join(UPLOADS_DIR, filename);
-        await fs.writeFile(filePath, buffer);
+        // Upload exactly to Vercel Blob
+        const blob = await put(filename, file, { access: 'public' });
 
         const now = new Date().toISOString();
 
         const photoData = {
             id,
-            filename,
-            originalName: file.name,
-            createdAt: now,
-            ownerId
+            filename: blob.url, // Save the absolute blob URL as the filename to render directly
+            originalname: file.name,
+            createdat: now,
+            ownerid: ownerId
         };
 
+        // Save to Vercel Postgres
         await addPhoto(photoData);
 
         return NextResponse.json({ success: true, photo: photoData });
