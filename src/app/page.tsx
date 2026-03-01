@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Camera, Image as ImageIcon, Download, Trash2, X, Plus } from "lucide-react";
 
-interface Photo { id: string; filename: string; ownerId: string; }
+interface Photo { id: string; filename: string; ownerid: string; }
 
 export default function Home() {
     const [photos, setPhotos] = useState<Photo[]>([]);
@@ -71,6 +71,28 @@ export default function Home() {
         } catch (e) { console.error(e); }
     }
 
+    const handleDownload = async (photo: Photo) => {
+        try {
+            const res = await fetch(photo.filename);
+            const blob = await res.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = blobUrl;
+            // Best effort generic filename
+            a.download = `Ramadan_Iftar_${photo.id.substring(0, 8)}.jpg`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            window.URL.revokeObjectURL(blobUrl);
+        } catch (err) {
+            console.error("Download failed:", err);
+            // Fallback for strict browsers
+            window.open(photo.filename, "_blank");
+        }
+    }
+
     return (
         <main className="min-h-screen pb-20">
             <header className="p-8 text-center border-b border-white/10 bg-[#3b1245]/80 backdrop-blur-md sticky top-0 z-10">
@@ -107,8 +129,8 @@ export default function Home() {
                         <img src={selectedPhoto.filename} className="max-h-full max-w-full object-contain rounded-lg shadow-2xl" />
                     </div>
                     <div className="flex justify-center gap-4 py-8 pb-12">
-                        <a href={selectedPhoto.filename} download className="flex items-center gap-2 px-6 py-3.5 bg-[#facc15] text-[#2a0a2f] rounded-full font-bold shadow-[0_4px_15px_rgba(250,204,21,0.3)] active:scale-95 transition"><Download size={20} /> Download</a>
-                        {selectedPhoto.ownerId === ownerId && (
+                        <button onClick={() => handleDownload(selectedPhoto)} className="flex items-center gap-2 px-6 py-3.5 bg-[#facc15] text-[#2a0a2f] rounded-full font-bold shadow-[0_4px_15px_rgba(250,204,21,0.3)] active:scale-95 transition"><Download size={20} /> Download</button>
+                        {selectedPhoto.ownerid === ownerId && (
                             <button onClick={() => handleDelete(selectedPhoto)} className="flex items-center gap-2 px-6 py-3.5 bg-red-950/40 text-red-300 border border-red-900/50 hover:bg-red-900/60 rounded-full font-medium active:scale-95 transition"><Trash2 size={20} /> Delete</button>
                         )}
                     </div>
