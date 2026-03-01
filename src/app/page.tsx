@@ -10,6 +10,7 @@ export default function Home() {
     const [ownerId, setOwnerId] = useState("");
     const [uploading, setUploading] = useState(false);
     const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
+    const [showUploadMenu, setShowUploadMenu] = useState(false);
 
     const cameraInputRef = useRef<HTMLInputElement>(null);
     const galleryInputRef = useRef<HTMLInputElement>(null);
@@ -115,18 +116,18 @@ export default function Home() {
             )}
 
             <div className="text-center mt-20 pb-20">
-                <a href="/api/admin/zip" className="text-xs text-white/40 font-inter hover:text-[#facc15] transition inline-block px-4 py-2 border border-transparent hover:border-white/10 rounded">
-                    Admin: Download All Photos
+                <a href="/admin/gallery" className="text-xs text-white/40 font-inter hover:text-[#facc15] transition inline-block px-4 py-2 border border-transparent hover:border-white/10 rounded">
+                    Admin Access
                 </a>
             </div>
 
             {/* Floating Action Button (FAB) */}
             <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40">
                 <button
-                    onClick={() => galleryInputRef.current?.click()}
+                    onClick={() => setShowUploadMenu(true)}
                     disabled={uploading}
                     className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#eab308] to-[#fef08a] text-[#2a0a2f] flex items-center justify-center shadow-[0_0_30px_rgba(250,204,21,0.6)] transition-transform hover:scale-110 active:scale-95 disabled:opacity-70 disabled:scale-100 group relative"
-                    aria-label="Upload Photo"
+                    aria-label="Upload Photo Menu"
                 >
                     <Plus size={32} className={`transition-transform duration-300 ${uploading ? "animate-spin" : "group-hover:rotate-90"}`} />
 
@@ -134,6 +135,44 @@ export default function Home() {
                     <span className="absolute inset-0 rounded-full border border-[#fef08a] opacity-50 blur-sm scale-110 pointer-events-none" />
                 </button>
             </div>
+
+            {/* Upload Action Sheet Modal */}
+            {showUploadMenu && (
+                <div
+                    className="fixed inset-0 z-50 bg-[#1e0722]/80 backdrop-blur-sm flex flex-col justify-end transition-opacity duration-300"
+                    onClick={() => setShowUploadMenu(false)}
+                >
+                    <div
+                        className="bg-[#3b1245] w-full rounded-t-3xl border-t border-white/10 p-6 pb-12 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] flex flex-col gap-4 animate-in slide-in-from-bottom"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <div className="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-4" />
+
+                        <button
+                            onClick={() => { cameraInputRef.current?.click(); setShowUploadMenu(false); }}
+                            className="w-full bg-gradient-to-r from-[#facc15] to-[#eab308] text-[#2a0a2f] font-bold py-4 rounded-xl flex items-center justify-center gap-3 shadow-[0_4px_20px_rgba(250,204,21,0.3)] transition-transform active:scale-95"
+                        >
+                            <Camera size={22} className={uploading ? "animate-pulse" : ""} />
+                            Take a Photo
+                        </button>
+
+                        <button
+                            onClick={() => { galleryInputRef.current?.click(); setShowUploadMenu(false); }}
+                            className="w-full bg-[#4a1c57]/60 backdrop-blur-sm text-[#facc15] border border-[#facc15]/30 font-medium py-4 rounded-xl flex items-center justify-center gap-3 transition-transform hover:bg-[#5c236d]/80 active:scale-95"
+                        >
+                            <ImageIcon size={22} />
+                            Upload from Gallery
+                        </button>
+
+                        <button
+                            onClick={() => setShowUploadMenu(false)}
+                            className="w-full mt-2 text-white/60 font-medium py-3 rounded-xl hover:bg-white/5 transition-colors"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
         </main>
     );
 }

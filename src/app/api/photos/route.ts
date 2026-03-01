@@ -18,9 +18,10 @@ export async function DELETE(request: NextRequest) {
         const { searchParams } = new URL(request.url);
         const id = searchParams.get('id');
         const ownerId = searchParams.get('ownerId');
+        const adminKey = searchParams.get('adminKey');
 
-        if (!id || !ownerId) {
-            return NextResponse.json({ error: 'Missing id or ownerId' }, { status: 400 });
+        if (!id) {
+            return NextResponse.json({ error: 'Missing id' }, { status: 400 });
         }
 
         const photos = await getPhotos();
@@ -30,8 +31,10 @@ export async function DELETE(request: NextRequest) {
             return NextResponse.json({ error: 'Photo not found' }, { status: 404 });
         }
 
+        const isAdmin = adminKey === (process.env.ADMIN_PASSWORD || 'ramadan123');
+
         // Must match the original lowercase definition in Postgres
-        if (photo.ownerid !== ownerId) {
+        if (!isAdmin && photo.ownerid !== ownerId) {
             return NextResponse.json({ error: 'Unauthorized deletion' }, { status: 403 });
         }
 
