@@ -73,9 +73,19 @@ export default function Home() {
 
     return (
         <main className="min-h-screen pb-20">
-            <header className="p-8 text-center border-b border-white/10 bg-[#3b1245]/80 backdrop-blur-md sticky top-0 z-10">
-                <h1 className="text-4xl font-playfair text-transparent bg-clip-text bg-gradient-to-r from-[#facc15] to-[#fef08a] mb-3 tracking-wide drop-shadow-[0_0_15px_rgba(250,204,21,0.3)]">Ramadan Kareem</h1>
-                <p className="text-white/80 font-inter text-sm max-w-[280px] mx-auto leading-relaxed">Daily Checklist & Activity Memories</p>
+            <header className="pt-12 pb-8 px-6 text-center relative overflow-hidden flex flex-col items-center border-b border-white/5 bg-[#3b1245]/40 backdrop-blur-md z-10">
+                {/* Subtle soft glow behind the text */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[100px] bg-[#facc15]/20 blur-[50px] rounded-[100%] pointer-events-none mix-blend-screen" />
+
+                <h1 className="text-5xl md:text-6xl font-aref-ruqaa text-transparent bg-clip-text bg-gradient-to-br from-[#fef08a] via-[#facc15] to-[#ca8a04] mb-4 tracking-wide relative z-10 filter drop-shadow-[0_2px_15px_rgba(250,204,21,0.4)]">
+                    رمضان كريم
+                </h1>
+
+                <div className="flex items-center justify-center gap-3 w-full max-w-[280px]">
+                    <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-[#facc15]/30 to-transparent" />
+                    <p className="text-[#fef08a]/80 font-playfair text-xs tracking-widest uppercase">Daily Activity</p>
+                    <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-[#facc15]/30 to-transparent" />
+                </div>
             </header>
 
             <section className="px-6 flex flex-col items-center gap-4 max-w-sm mx-auto mt-4">

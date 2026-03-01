@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Playfair_Display, Inter, Aref_Ruqaa } from "next/font/google";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -10,6 +10,12 @@ const playfair = Playfair_Display({
 const inter = Inter({
     subsets: ["latin"],
     variable: "--font-inter",
+});
+
+const arefRuqaa = Aref_Ruqaa({
+    weight: ["400", "700"],
+    subsets: ["arabic"],
+    variable: "--font-aref-ruqaa",
 });
 
 export const metadata: Metadata = {
@@ -25,7 +31,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body
-                className={`${playfair.variable} ${inter.variable} font-sans antialiased bg-[#2a0a2f] text-slate-100 selection:bg-[#facc15] selection:text-[#2a0a2f]`}
+                className={`${playfair.variable} ${inter.variable} ${arefRuqaa.variable} font-sans antialiased bg-[#2a0a2f] text-slate-100 selection:bg-[#facc15] selection:text-[#2a0a2f]`}
             >
                 {children}
             </body>

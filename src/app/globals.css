@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@theme {
+  --font-aref-ruqaa: var(--font-aref-ruqaa);
+  --font-playfair: var(--font-playfair);
+  --font-inter: var(--font-inter);
+}
+
 :root {
   --background: #2a0a2f;
   --foreground: #f8fafc;
