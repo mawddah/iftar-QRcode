@@ -79,8 +79,8 @@ export default function Home() {
 
             const a = document.createElement("a");
             a.href = blobUrl;
-            // Best effort generic filename
-            a.download = `Ramadan_Iftar_${photo.id.substring(0, 8)}.jpg`;
+            // Best effort generic filename converted to PNG
+            a.download = `Ramadan_Iftar_${photo.id.substring(0, 8)}.png`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -101,6 +101,7 @@ export default function Home() {
             </header>
 
             <section className="px-6 flex flex-col items-center gap-4 max-w-sm mx-auto mt-4">
+                <input type="file" accept="image/*" capture="environment" className="hidden" ref={cameraInputRef} onChange={handleUpload} />
                 <input type="file" accept="image/*" className="hidden" ref={galleryInputRef} onChange={handleUpload} />
             </section>
 
