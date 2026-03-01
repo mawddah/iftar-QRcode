@@ -40,7 +40,7 @@ export default function AdminQR() {
                 className="bg-white w-[210mm] min-h-[297mm] shadow-2xl print:shadow-none flex flex-col items-center justify-center p-12 text-center border box-border print:border-none print:w-full print:min-h-full"
             >
                 <div className="border-4 border-blue-900 p-16 rounded-3xl flex flex-col items-center max-w-2xl bg-slate-50">
-                    <h1 className="text-5xl font-playfair font-bold text-blue-900 mb-16 tracking-wider uppercase text-center leading-snug">
+                    <h1 className="text-5xl font-playfair font-medium text-blue-900 mb-16 text-center leading-snug">
                         SKME Ramadan Iftar
                     </h1>
 
