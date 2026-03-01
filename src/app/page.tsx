@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Camera, Image as ImageIcon, Download, Trash2, X } from "lucide-react";
+import { Camera, Image as ImageIcon, Download, Trash2, X, Plus } from "lucide-react";
 
 interface Photo { id: string; filename: string; ownerId: string; }
 
@@ -46,8 +46,16 @@ export default function Home() {
 
         try {
             const res = await fetch("/api/upload", { method: "POST", body: formData });
-            if (res.ok) fetchPhotos();
-        } catch (err) { console.error(err); }
+            const data = await res.json();
+            if (res.ok) {
+                fetchPhotos();
+            } else {
+                alert(`Upload failed: ${data.error || 'Server error'}. Please check Vercel API keys.`);
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Upload failed completely. Network or server error.");
+        }
         finally { setUploading(false); }
 
         e.target.value = "";
@@ -69,39 +77,21 @@ export default function Home() {
                 <p className="text-white/80 font-inter text-sm max-w-[280px] mx-auto leading-relaxed">Daily Checklist & Activity Memories</p>
             </header>
 
-            <section className="p-6 flex flex-col items-center gap-4 max-w-sm mx-auto mt-4">
-                <input type="file" accept="image/*" capture="environment" className="hidden" ref={cameraInputRef} onChange={handleUpload} />
+            <section className="px-6 flex flex-col items-center gap-4 max-w-sm mx-auto mt-4">
                 <input type="file" accept="image/*" className="hidden" ref={galleryInputRef} onChange={handleUpload} />
-
-                <button
-                    onClick={() => cameraInputRef.current?.click()}
-                    disabled={uploading}
-                    className="w-full bg-gradient-to-r from-[#facc15] to-[#eab308] text-[#2a0a2f] font-bold py-4 rounded-xl flex items-center justify-center gap-3 shadow-[0_4px_20px_rgba(250,204,21,0.3)] transition-transform active:scale-95 disabled:opacity-70 disabled:scale-100"
-                >
-                    <Camera size={22} className={uploading ? "animate-pulse" : ""} />
-                    {uploading ? "Uploading..." : "Take a Photo"}
-                </button>
-
-                <button
-                    onClick={() => galleryInputRef.current?.click()}
-                    disabled={uploading}
-                    className="w-full bg-[#4a1c57]/60 backdrop-blur-sm text-[#facc15] border border-[#facc15]/30 font-medium py-4 rounded-xl flex items-center justify-center gap-3 transition-transform hover:bg-[#5c236d]/80 active:scale-95 disabled:opacity-50"
-                >
-                    <ImageIcon size={22} />
-                    Upload from Gallery
-                </button>
             </section>
 
             {photos.length === 0 ? (
-                <div className="text-center text-[#d8b4e2] mt-10 px-6 font-inter text-sm">
-                    <p>No memories shared yet.</p>
+                <div className="text-center text-[#d8b4e2] mt-10 px-6 font-inter text-sm max-w-sm mx-auto p-8 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
+                    <p className="mb-2">No memories shared yet.</p>
                     <p>Be the first to upload!</p>
                 </div>
             ) : (
-                <section className="px-4 mt-6 columns-2 sm:columns-3 md:columns-4 gap-4 space-y-4">
+                <section className="px-4 mt-8 columns-2 sm:columns-3 md:columns-4 gap-4 space-y-4">
                     {photos.map(photo => (
-                        <div key={photo.id} className="break-inside-avoid relative group cursor-pointer overflow-hidden rounded-xl shadow-[0_4px_15px_rgba(0,0,0,0.5)] border border-white/20 bg-[#2a0a2f]/40 backdrop-blur-sm" onClick={() => setSelectedPhoto(photo)}>
-                            <img src={photo.filename} alt="Memory" className="w-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                        <div key={photo.id} className="break-inside-avoid relative group cursor-pointer overflow-hidden rounded-2xl shadow-[0_8px_20px_rgba(0,0,0,0.4)] border border-white/15 bg-white/5 backdrop-blur-md transition-all duration-300 hover:shadow-[0_8px_30px_rgba(250,204,21,0.2)] hover:-translate-y-1" onClick={() => setSelectedPhoto(photo)}>
+                            <img src={photo.filename} alt="Memory" className="w-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#2a0a2f]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                         </div>
                     ))}
                 </section>
@@ -124,10 +114,25 @@ export default function Home() {
                 </div>
             )}
 
-            <div className="text-center mt-20 pb-8">
+            <div className="text-center mt-20 pb-20">
                 <a href="/api/admin/zip" className="text-xs text-white/40 font-inter hover:text-[#facc15] transition inline-block px-4 py-2 border border-transparent hover:border-white/10 rounded">
                     Admin: Download All Photos
                 </a>
+            </div>
+
+            {/* Floating Action Button (FAB) */}
+            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40">
+                <button
+                    onClick={() => galleryInputRef.current?.click()}
+                    disabled={uploading}
+                    className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#eab308] to-[#fef08a] text-[#2a0a2f] flex items-center justify-center shadow-[0_0_30px_rgba(250,204,21,0.6)] transition-transform hover:scale-110 active:scale-95 disabled:opacity-70 disabled:scale-100 group relative"
+                    aria-label="Upload Photo"
+                >
+                    <Plus size={32} className={`transition-transform duration-300 ${uploading ? "animate-spin" : "group-hover:rotate-90"}`} />
+
+                    {/* Soft glowing ring around the button */}
+                    <span className="absolute inset-0 rounded-full border border-[#fef08a] opacity-50 blur-sm scale-110 pointer-events-none" />
+                </button>
             </div>
         </main>
     );
